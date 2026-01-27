@@ -166,7 +166,7 @@ export function VideoContent({ navigationData, siteData }: VideoContentProps) {
                                                 <h3 className="text-sm font-medium text-muted-foreground">
                                                     {subCategory.title}
                                                 </h3>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                                     {(subCategory.items || []).map((item) => (
                                                         <VideoCard key={item.id} item={item} siteConfig={siteData} />
                                                     ))}
@@ -174,7 +174,7 @@ export function VideoContent({ navigationData, siteData }: VideoContentProps) {
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                             {(category.items || []).map((item) => (
                                                 <VideoCard key={item.id} item={item} siteConfig={siteData} />
                                             ))}
