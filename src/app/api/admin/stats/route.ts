@@ -6,9 +6,9 @@ export const runtime = 'edge'
 export async function GET() {
   try {
     // 动态读取最新的导航数据，而不是静态导入
-    const navigationData = await getFileContent('navsphere/content/navigation.json')
+    const navigationData = await getFileContent('src/navsphere/content/navigation.json')
     const navigationItems = navigationData.navigationItems || []
-    
+
     // 计算一级分类数量
     const parentCategories = navigationItems.length
     console.log('Parent categories:', parentCategories)
@@ -25,13 +25,13 @@ export async function GET() {
     const totalSites = navigationItems.reduce((total: number, category: any) => {
       // 一级分类的站点
       const parentSites = category.items?.length || 0
-      
+
       // 二级分类的站点
-      const subCategoriesSites = Array.isArray(category.subCategories) 
-  ? (category.subCategories as NavigationCategory[]).reduce((sum, subCategory) => {
-      return sum + (subCategory.items?.length || 0);
-    }, 0)
-  : 0;
+      const subCategoriesSites = Array.isArray(category.subCategories)
+        ? (category.subCategories as NavigationCategory[]).reduce((sum, subCategory) => {
+          return sum + (subCategory.items?.length || 0);
+        }, 0)
+        : 0;
 
       return total + parentSites + subCategoriesSites
     }, 0)
@@ -42,7 +42,7 @@ export async function GET() {
       totalCategories,
       totalSites
     }
-    
+
     console.log('Sending stats:', result)
     return NextResponse.json(result)
   } catch (error) {

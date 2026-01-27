@@ -12,12 +12,12 @@ export async function GET() {
     }
 
     try {
-      const defaultData = await getFileContent('navsphere/content/navigation-default.json')
-      
+      const defaultData = await getFileContent('src/navsphere/content/navigation-default.json')
+
       // 验证文件格式
-      const isValid = defaultData && 
-                     typeof defaultData === 'object' && 
-                     Array.isArray(defaultData.navigationItems)
+      const isValid = defaultData &&
+        typeof defaultData === 'object' &&
+        Array.isArray(defaultData.navigationItems)
 
       return NextResponse.json({
         exists: true,
@@ -38,9 +38,9 @@ export async function GET() {
   } catch (error) {
     console.error('Failed to check default file:', error)
     return NextResponse.json(
-      { 
-        error: 'Failed to check default file', 
-        details: (error as Error).message 
+      {
+        error: 'Failed to check default file',
+        details: (error as Error).message
       },
       { status: 500 }
     )

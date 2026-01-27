@@ -17,8 +17,8 @@ export async function PUT(
     }
 
     const updatedItem: NavigationItem = await request.json()
-    const data = await getFileContent('navsphere/content/navigation.json') as NavigationData
-    
+    const data = await getFileContent('src/navsphere/content/navigation.json') as NavigationData
+
     // 确保更新的导航项包含所有必需的字段
     const existingItem = data.navigationItems.find(item => item.id === id)
     if (!existingItem) {
@@ -44,19 +44,20 @@ export async function PUT(
               items: [
                 ...(exist?.items || []),
                 ...(sub.items || [])
-              ]            });
+              ]
+            });
             return acc;
           }, new Map<string, NavigationItem>())
         ).values()
-      ]   
-     }
+      ]
+    }
 
-    const updatedItems = data.navigationItems.map(item => 
+    const updatedItems = data.navigationItems.map(item =>
       item.id === id ? mergedItem : item
     )
 
     await commitFile(
-      'navsphere/content/navigation.json',
+      'src/navsphere/content/navigation.json',
       JSON.stringify({ navigationItems: updatedItems }, null, 2),
       'Update navigation item',
       session.user.accessToken

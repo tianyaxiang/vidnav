@@ -13,10 +13,10 @@ export async function POST(request: Request) {
     }
 
     const { sourceIndex, destinationIndex, itemId } = await request.json()
-    
+
     // 获取当前导航数据
-    const data = await getFileContent('navsphere/content/navigation.json') as NavigationData
-    
+    const data = await getFileContent('src/navsphere/content/navigation.json') as NavigationData
+
     // 确保导航项存在
     if (!data.navigationItems || !Array.isArray(data.navigationItems)) {
       throw new Error('无效的导航数据')
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     // 找到要移动的项目
     const [movedItem] = updatedItems.splice(sourceIndex, 1)
-    
+
     // 将项目插入到新位置
     updatedItems.splice(destinationIndex, 0, movedItem)
 
@@ -36,8 +36,8 @@ export async function POST(request: Request) {
 
     // 提交更改到 GitHub
     await commitFile(
-      'navsphere/content/navigation.json', 
-      JSON.stringify(data, null, 2), 
+      'src/navsphere/content/navigation.json',
+      JSON.stringify(data, null, 2),
       `重新排序导航项 - ${new Date().toISOString()}`,
       session.user.accessToken
     )
@@ -45,9 +45,9 @@ export async function POST(request: Request) {
     return NextResponse.json(data.navigationItems, { status: 200 })
   } catch (error) {
     console.error('重新排序导航项错误:', error)
-    return NextResponse.json({ 
-      error: '重新排序导航项失败', 
-      details: (error as Error).message 
+    return NextResponse.json({
+      error: '重新排序导航项失败',
+      details: (error as Error).message
     }, { status: 500 })
   }
 }

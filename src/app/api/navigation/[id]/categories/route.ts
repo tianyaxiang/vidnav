@@ -21,8 +21,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 })
     }
 
-    const data = await getFileContent('navsphere/content/navigation.json') as NavigationData
-    
+    const data = await getFileContent('src/navsphere/content/navigation.json') as NavigationData
+
     const navigation = data.navigationItems.find(nav => nav.id === id)
     if (!navigation) {
       return NextResponse.json({ error: 'Navigation not found' }, { status: 404 })
@@ -48,7 +48,7 @@ export async function DELETE(
     })
 
     await commitFile(
-      'navsphere/content/navigation.json',
+      'src/navsphere/content/navigation.json',
       JSON.stringify({ navigationItems: updatedNavigations }, null, 2),
       `Delete category: ${categoryId}`,
       session.user.accessToken

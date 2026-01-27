@@ -7,7 +7,7 @@ export const runtime = 'edge'
 
 export async function GET() {
   try {
-    const data = await getFileContent('navsphere/content/navigation.json')
+    const data = await getFileContent('src/navsphere/content/navigation.json')
     return NextResponse.json(data)
   } catch (error) {
     console.error('Failed to fetch navigation data:', error)
@@ -21,7 +21,7 @@ export async function GET() {
 async function validateAndSaveNavigationData(data: any, accessToken: string) {
   // 详细的数据结构验证和日志
   console.log('Received navigation data:', JSON.stringify(data, null, 2))
-  
+
   // 严格验证数据结构
   if (!data || typeof data !== 'object') {
     console.error('Invalid data: not an object')
@@ -39,9 +39,9 @@ async function validateAndSaveNavigationData(data: any, accessToken: string) {
   }
 
   // 额外的数据验证
-  const invalidItems = data.navigationItems.filter((item: NavigationItem) => 
-    !item.id || 
-    !item.title || 
+  const invalidItems = data.navigationItems.filter((item: NavigationItem) =>
+    !item.id ||
+    !item.title ||
     (item.items && !Array.isArray(item.items)) ||
     (item.subCategories && !Array.isArray(item.subCategories))
   )
@@ -52,7 +52,7 @@ async function validateAndSaveNavigationData(data: any, accessToken: string) {
   }
 
   await commitFile(
-    'navsphere/content/navigation.json',
+    'src/navsphere/content/navigation.json',
     JSON.stringify(data, null, 2),
     'Update navigation data',
     accessToken
@@ -73,9 +73,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Failed to save navigation data:', error)
     return NextResponse.json(
-      { 
-        error: 'Failed to save navigation data', 
-        details: (error as Error).message 
+      {
+        error: 'Failed to save navigation data',
+        details: (error as Error).message
       },
       { status: 500 }
     )
@@ -96,9 +96,9 @@ export async function PUT(request: Request) {
   } catch (error) {
     console.error('Failed to update navigation data:', error)
     return NextResponse.json(
-      { 
-        error: 'Failed to update navigation data', 
-        details: (error as Error).message 
+      {
+        error: 'Failed to update navigation data',
+        details: (error as Error).message
       },
       { status: 500 }
     )

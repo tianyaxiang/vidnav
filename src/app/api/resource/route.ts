@@ -10,7 +10,7 @@ export const runtime = 'edge'
 
 export async function GET() {
     try {
-        const data = await getFileContent('navsphere/content/resource-metadata.json') as ResourceMetadata
+        const data = await getFileContent('src/navsphere/content/resource-metadata.json') as ResourceMetadata
         if (!data?.metadata || !Array.isArray(data.metadata)) {
             throw new Error('Invalid data structure');
         }
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         const { path: imageUrl, commitHash } = await uploadImageToGitHub(binaryData, session.user.accessToken);
 
         // Handle metadata
-        const metadata = await getFileContent('navsphere/content/resource-metadata.json') as ResourceMetadata;
+        const metadata = await getFileContent('src/navsphere/content/resource-metadata.json') as ResourceMetadata;
         metadata.metadata.unshift({
             commit: commitHash,  // 使用实际的 commit hash
             hash: commitHash,    // 使用相同的 hash 作为资源标识
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         });
 
         await commitFile(
-            'navsphere/content/resource-metadata.json',
+            'src/navsphere/content/resource-metadata.json',
             JSON.stringify(metadata, null, 2),
             'Update resource metadata',
             session.user.accessToken
@@ -110,7 +110,7 @@ export async function DELETE(request: Request) {
         }
 
         // 获取当前的资源元数据
-        const metadata = await getFileContent('navsphere/content/resource-metadata.json') as ResourceMetadata;
+        const metadata = await getFileContent('src/navsphere/content/resource-metadata.json') as ResourceMetadata;
 
         // 过滤掉要删除的资源
         const originalCount = metadata.metadata.length;
@@ -119,7 +119,7 @@ export async function DELETE(request: Request) {
 
         // 更新资源元数据文件
         await commitFile(
-            'navsphere/content/resource-metadata.json',
+            'src/navsphere/content/resource-metadata.json',
             JSON.stringify(metadata, null, 2),
             `Delete ${deletedCount} resource(s)`,
             session.user.accessToken

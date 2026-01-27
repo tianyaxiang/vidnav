@@ -7,7 +7,7 @@ export const runtime = 'edge'
 
 export async function GET() {
   try {
-    const data = await getFileContent('navsphere/content/site.json') as SiteInfo
+    const data = await getFileContent('src/navsphere/content/site.json') as SiteInfo
     return NextResponse.json(data)
   } catch (error) {
     console.error('Failed to read site data:', error)
@@ -37,10 +37,10 @@ export async function POST(request: Request) {
     }
 
     const data: SiteInfo = await request.json()
-    
+
     // 提交到 GitHub
     await commitFile(
-      'navsphere/content/site.json',
+      'src/navsphere/content/site.json',
       JSON.stringify(data, null, 2),
       'Update site configuration',
       session.user.accessToken
