@@ -14,6 +14,21 @@
           "description": "",
           "icon": "/assets/cover/cover_1769518085708.jpg",
           "enabled": true
+        },
+        {
+          "id": "1769518825534",
+          "title": "【唐伯虎点秋香】 4K 自购原碟修复 全网最清晰版本 国语中字周星驰 巩俐 陈百祥 郑佩佩 朱咪咪 梁家仁 苑琼丹 梁荣忠 黄一山 黄霑 吴镇宇",
+          "href": "https://www.bilibili.com/video/BV1ADzkBoEDS/?spm_id_from=333.1007.tianma.1-2-2.click&vd_source=3e256028a6bd06a466a4ca2412cd6f21",
+          "description": "",
+          "icon": "/assets/cover/cover_1769518829333.jpg",
+          "enabled": true,
+          "videoConfig": {
+            "type": "bilibili",
+            "bvid": "BV1ADzkBoEDS",
+            "aid": "115949621610277",
+            "cid": "35585262359",
+            "p": 1
+          }
         }
       ],
       "subCategories": []
