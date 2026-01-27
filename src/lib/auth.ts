@@ -20,7 +20,7 @@ const config = {
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       authorization: {
         params: { scope: 'repo' }
       }
@@ -43,7 +43,7 @@ const config = {
   pages: {
     signIn: '/auth/signin'
   },
-  secret: process.env.GITHUB_SECRET
+  secret: process.env.GITHUB_CLIENT_SECRET
 } satisfies NextAuthConfig
 
 const handler = NextAuth(config)
