@@ -1,0 +1,31 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: hsl(var(--background));
+}
+
+.admin-sidebar {
+  width: 240px;
+  padding: 1rem;
+  border-right: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+}
+
+.admin-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: hsl(var(--background));
+}
+
+.resource-section,
+.navigation-list {
+  margin-top: 1.5rem;
+}
+
+.resource-item,
+.navigation-item {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+} 
