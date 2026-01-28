@@ -7,7 +7,7 @@ name = "vidnav"
 # Compatibility settings for Cloudflare Workers runtime
 compatibility_date = "2024-11-11"
 compatibility_flags = ["nodejs_compat"]
-
+pages_build_output_dir = ".vercel/output/static"
 # Pages-specific configuration
 # Note: For Next.js on Cloudflare Pages, the build output is in .next/
 # NOT .next/standalone (standalone is for self-hosted deployments)
