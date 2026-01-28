@@ -47,7 +47,23 @@
           "icon": "PlayCircle",
           "description": "",
           "enabled": true,
-          "items": []
+          "items": [
+            {
+              "id": "1769595108871",
+              "title": "《沃尔特·施洛斯访谈资料集》  1985年：真材实料",
+              "href": "https://www.bilibili.com/video/BV1pM411i7a1/?spm_id_from=333.337.search-card.all.click",
+              "description": "读书分享：《沃尔特·施洛斯访谈资料集》 作者：不详",
+              "icon": "/assets/cover/cover_1769595135900.jpg",
+              "enabled": true,
+              "videoConfig": {
+                "type": "bilibili",
+                "bvid": "BV1pM411i7a1",
+                "aid": "523604377",
+                "cid": "986768320",
+                "p": 1
+              }
+            }
+          ]
         }
       ]
     },
