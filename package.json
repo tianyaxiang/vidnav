@@ -18,7 +18,7 @@
     "docker:logs": "docker-compose -f docker/docker-compose.yml logs -f",
     "docker:deploy": "./scripts/docker-deploy.sh",
     "cf:build": "next build",
-    "cf:deploy": "wrangler pages deploy .next/standalone --project-name=vidnav"
+    "cf:deploy": "wrangler pages deploy .next --project-name=vidnav"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^17.0.0",
