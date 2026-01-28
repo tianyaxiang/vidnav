@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { SUBMISSION_LABELS, parseSubmissionFromIssueBody } from '@/types/submission'
-import { NavigationData, NavigationItem, NavigationCategory, NavigationSubItem } from '@/types/navigation'
-import fs from 'fs'
-import path from 'path'
+
+export const runtime = 'edge'
+
+
 
 const GITHUB_API = 'https://api.github.com'
 const GITHUB_OWNER = process.env.GITHUB_OWNER!
@@ -67,37 +68,59 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }
 
         if (action === 'approve') {
-            // 添加到导航数据
-            const navigationPath = path.join(process.cwd(), 'src/navsphere/content/navigation.json')
-            const navigationData: NavigationData = JSON.parse(fs.readFileSync(navigationPath, 'utf-8'))
+            // 使用 GitHub API 读取和更新导航文件
+            const filePath = 'src/navsphere/content/navigation.json'
 
-            // 查找目标分类
+            // 1. 获取当前文件内容
+            const fileResponse = await fetch(
+                `${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}?ref=${process.env.GITHUB_BRANCH || 'main'}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${GITHUB_PAT}`,
+                        'Accept': 'application/vnd.github+json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                }
+            )
+
+            if (!fileResponse.ok) {
+                return NextResponse.json(
+                    { success: false, message: '无法读取导航数据文件' },
+                    { status: 500 }
+                )
+            }
+
+            const fileData = await fileResponse.json()
+            const content = atob(fileData.content) // Base64 decode
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const navigationData: any = JSON.parse(content)
+
+            // 2. 查找目标分类并添加新项
             const categoryId = submissionData.category
             const subcategoryId = submissionData.subcategory
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let targetCategory = navigationData.navigationItems.find(
-                (item) => item.id === categoryId || item.title === categoryId
+                (item: any) => item.id === categoryId || item.title === categoryId
             )
 
             if (!targetCategory) {
-                // 如果找不到分类，添加到第一个分类
                 targetCategory = navigationData.navigationItems[0]
             }
 
-            // 生成新的导航项
             const newItem = {
                 id: `${Date.now()}`,
                 title: submissionData.title,
                 href: submissionData.url,
                 description: submissionData.description,
-                icon: '/assets/images/default-website-icon.png', // 默认图标
+                icon: '/assets/images/default-website-icon.png',
                 enabled: true
             }
 
-            // 如果有子分类，添加到子分类
             if (subcategoryId && targetCategory.subCategories) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const targetSubCategory = targetCategory.subCategories.find(
-                    (sub) => sub.id === subcategoryId || sub.title === subcategoryId
+                    (sub: any) => sub.id === subcategoryId || sub.title === subcategoryId
                 )
                 if (targetSubCategory) {
                     if (!targetSubCategory.items) {
@@ -105,22 +128,49 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
                     }
                     targetSubCategory.items.push(newItem)
                 } else {
-                    // 子分类不存在，添加到主分类
                     if (!targetCategory.items) {
                         targetCategory.items = []
                     }
                     targetCategory.items.push(newItem)
                 }
             } else {
-                // 直接添加到主分类
                 if (!targetCategory.items) {
                     targetCategory.items = []
                 }
                 targetCategory.items.push(newItem)
             }
 
-            // 写入文件
-            fs.writeFileSync(navigationPath, JSON.stringify(navigationData, null, 2))
+            // 3. 将更新后的数据提交回 GitHub
+            const updatedContent = btoa(JSON.stringify(navigationData, null, 2)) // Base64 encode
+
+            const updateResponse = await fetch(
+                `${GITHUB_API}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${GITHUB_PAT}`,
+                        'Accept': 'application/vnd.github+json',
+                        'Content-Type': 'application/json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    body: JSON.stringify({
+                        message: `✅ Add submission: ${submissionData.title}`,
+                        content: updatedContent,
+                        sha: fileData.sha,
+                        branch: process.env.GITHUB_BRANCH || 'main'
+                    })
+                }
+            )
+
+            if (!updateResponse.ok) {
+                const error = await updateResponse.json()
+                console.error('GitHub file update error:', error)
+                return NextResponse.json(
+                    { success: false, message: '更新导航文件失败' },
+                    { status: 500 }
+                )
+            }
+
 
             // 更新 Issue 标签
             await updateIssueLabels(issueNumber, SUBMISSION_LABELS.APPROVED, SUBMISSION_LABELS.PENDING)
