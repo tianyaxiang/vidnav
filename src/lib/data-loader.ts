@@ -1,7 +1,7 @@
-import type { SiteConfig } from '@/types/site'
-import type { NavigationData, NavigationItem, NavigationSubItem } from '@/types/navigation'
+import type { SiteConfig, SiteInfo } from '@/types/site'
+import type { NavigationData, NavigationDataRaw, NavigationItem, NavigationSubItem, NavigationSubItemRaw, VideoConfig } from '@/types/navigation'
 
-export function processSiteData(siteDataRaw: SiteConfig): SiteConfig {
+export function processSiteData(siteDataRaw: SiteInfo): SiteConfig {
     return {
         ...siteDataRaw,
         appearance: {
@@ -19,6 +19,50 @@ export function processSiteData(siteDataRaw: SiteConfig): SiteConfig {
                 : '_blank'
         }
     } as SiteConfig
+}
+
+export function processNavigationSubItem(item: NavigationSubItemRaw): NavigationSubItem {
+    let videoConfig: VideoConfig | undefined = undefined
+
+    if (item.videoConfig) {
+        const validType = (item.videoConfig.type === 'bilibili' || item.videoConfig.type === 'youtube')
+            ? item.videoConfig.type as 'bilibili' | 'youtube'
+            : 'bilibili' // default fallback
+
+        videoConfig = {
+            type: validType,
+            videoId: item.videoConfig.videoId,
+            bvid: item.videoConfig.bvid,
+            aid: item.videoConfig.aid,
+            cid: item.videoConfig.cid,
+            p: item.videoConfig.p
+        }
+    }
+
+    return {
+        id: item.id,
+        title: item.title,
+        href: item.href,
+        description: item.description,
+        icon: item.icon,
+        enabled: item.enabled,
+        videoConfig
+    }
+}
+
+export function processNavigationData(navigationDataRaw: NavigationDataRaw): NavigationData {
+    const processedItems = navigationDataRaw.navigationItems.map(category => ({
+        ...category,
+        items: category.items?.map(processNavigationSubItem),
+        subCategories: category.subCategories?.map(sub => ({
+            ...sub,
+            items: sub.items?.map(processNavigationSubItem)
+        }))
+    }))
+
+    return {
+        navigationItems: processedItems as NavigationItem[]
+    }
 }
 
 export function filterNavigationData(navigationData: NavigationData): NavigationData {
@@ -46,9 +90,10 @@ export function filterNavigationData(navigationData: NavigationData): Navigation
     }
 }
 
-export function getProcessedData(navigationDataRaw: NavigationData, siteDataRaw: SiteConfig) {
+export function getProcessedData(navigationDataRaw: NavigationDataRaw, siteDataRaw: SiteInfo) {
     const siteData = processSiteData(siteDataRaw)
-    const navigationData = filterNavigationData(navigationDataRaw)
+    const processedNavigationData = processNavigationData(navigationDataRaw)
+    const navigationData = filterNavigationData(processedNavigationData)
 
     return {
         siteData,

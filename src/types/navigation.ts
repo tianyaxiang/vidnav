@@ -1,3 +1,24 @@
+// Raw types for JSON data (before validation)
+export interface VideoConfigRaw {
+  type: string
+  videoId?: string
+  bvid?: string
+  aid?: string
+  cid?: string
+  p?: number
+}
+
+export interface NavigationSubItemRaw {
+  id: string
+  title: string
+  href: string
+  description?: string
+  icon?: string
+  enabled: boolean
+  videoConfig?: VideoConfigRaw
+}
+
+// Validated types (after processing)
 export interface NavigationSubItem {
   id: string
   title: string
@@ -15,6 +36,30 @@ export interface VideoConfig {
   aid?: string
   cid?: string
   p?: number
+}
+
+export interface NavigationCategoryRaw {
+  id: string
+  title: string
+  icon?: string
+  description?: string
+  parentId?: string
+  items?: NavigationSubItemRaw[]
+  enabled?: boolean
+}
+
+export interface NavigationItemRaw {
+  id: string
+  title: string
+  description?: string
+  icon?: string
+  items?: NavigationSubItemRaw[]
+  subCategories?: NavigationCategoryRaw[]
+  enabled?: boolean
+}
+
+export interface NavigationDataRaw {
+  navigationItems: NavigationItemRaw[]
 }
 
 export interface NavigationCategory {
